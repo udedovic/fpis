@@ -1,6 +1,5 @@
 package fpis.controller;
 
-import fpis.dto.ProductDTO;
 import fpis.dto.WorkerDTO;
 import fpis.service.WorkerService;
 import org.springframework.beans.factory.annotation.Autowired;

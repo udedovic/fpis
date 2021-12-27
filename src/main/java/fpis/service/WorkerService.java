@@ -18,7 +18,7 @@ public class WorkerService {
         return workerOptional.map(this::fromEntity).orElse(null);
     }
 
-    private WorkerDTO fromEntity(Worker worker) {
+    public WorkerDTO fromEntity(Worker worker) {
         WorkerDTO dto = new WorkerDTO();
         dto.setSifra(worker.getSifra());
         dto.setImePrezime(worker.getImePrezime());
