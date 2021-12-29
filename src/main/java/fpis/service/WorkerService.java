@@ -18,6 +18,11 @@ public class WorkerService {
         return workerOptional.map(this::fromEntity).orElse(null);
     }
 
+    public Worker findById(Integer id){
+        Optional<Worker> workerOptional = workerRepository.findById(id);
+        return workerOptional.orElse(null);
+    }
+
     public WorkerDTO fromEntity(Worker worker) {
         WorkerDTO dto = new WorkerDTO();
         dto.setSifra(worker.getSifra());

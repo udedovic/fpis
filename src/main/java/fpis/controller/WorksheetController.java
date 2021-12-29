@@ -21,4 +21,22 @@ public class WorksheetController {
     public WorksheetDTO getWorksheet(@PathVariable("id") Integer id) {
         return worksheetService.getWorksheet(id);
     }
+
+    @PostMapping("/")
+    public Boolean insertWorksheet(@RequestBody WorksheetDTO worksheetDTO) {
+        try {
+            return worksheetService.insertWorksheet(worksheetDTO);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @PutMapping("/")
+    public Boolean updateWorksheet(@RequestBody WorksheetDTO worksheetDTO) {
+        try {
+            return worksheetService.updateWorksheet(worksheetDTO);
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

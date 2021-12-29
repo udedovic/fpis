@@ -28,6 +28,10 @@ public class ProductService {
 
     @Transactional
     public Boolean insertProduct(ProductDTO productDTO) {
+        Optional<Product> productOptional = productRepository.findById(productDTO.getSifraProizvoda());
+        if (productOptional.isPresent()) {
+            productDTO.setSifraProizvoda(getNewId());
+        }
         Product product = toEntity(productDTO);
         productRepository.save(product);
         return true;
