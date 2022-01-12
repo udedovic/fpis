@@ -4,14 +4,19 @@ import fpis.domain.*;
 import fpis.dto.AbsenceItemDTO;
 import fpis.dto.PresenceItemDTO;
 import fpis.dto.WorksheetDTO;
+import fpis.identity.AbsenceItemIdentity;
+import fpis.identity.PresenceItemIdentity;
 import fpis.repository.AbsenceItemRepository;
 import fpis.repository.PresenceItemRepository;
 import fpis.repository.WorksheetRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
@@ -60,7 +65,56 @@ public class WorksheetService {
 
     @Transactional
     public Boolean updateWorksheet(WorksheetDTO worksheetDTO) {
-        return true;
+        Worksheet source = toEntity(worksheetDTO);
+        Optional<Worksheet> targetOptional = worksheetRepository.findById(worksheetDTO.getSifra());
+        if (targetOptional.isPresent()) {
+            Worksheet target = targetOptional.get();
+            BeanUtils.copyProperties(source, target, "sifra");
+            worksheetRepository.save(target);
+            if (worksheetDTO.getPresenceItemList() != null && worksheetDTO.getPresenceItemList().size() > 0) {
+                for (PresenceItemDTO presenceItemDTO : worksheetDTO.getPresenceItemList()) {
+                    if (presenceItemDTO.getStatus().equals("delete")) {
+                        presenceItemRepository.deleteById(new PresenceItemIdentity(target.getSifra(), presenceItemDTO.getRedniBroj()));
+                    }
+                }
+                for (PresenceItemDTO presenceItemDTO : worksheetDTO.getPresenceItemList()) {
+                    if (presenceItemDTO.getStatus().equals("insert")) {
+                        presenceItemRepository.save(toPresenceItem(presenceItemDTO, target));
+                    }
+                }
+                for (PresenceItemDTO presenceItemDTO : worksheetDTO.getPresenceItemList()) {
+                    if (presenceItemDTO.getStatus().equals("update")) {
+                        PresenceItem presenceItemSource = toPresenceItem(presenceItemDTO, target);
+                        PresenceItem presenceItemTarget = presenceItemRepository.getById(new PresenceItemIdentity(target.getSifra(), presenceItemDTO.getRedniBroj()));
+                        BeanUtils.copyProperties(presenceItemSource, presenceItemTarget, "worksheet", "redniBroj");
+                        presenceItemRepository.save(presenceItemTarget);
+                    }
+                }
+            }
+            if (worksheetDTO.getAbsenceItemList() != null && worksheetDTO.getAbsenceItemList().size() > 0) {
+                for (AbsenceItemDTO absenceItemDTO : worksheetDTO.getAbsenceItemList()) {
+                    if (absenceItemDTO.getStatus().equals("delete")) {
+                        absenceItemRepository.deleteById(new AbsenceItemIdentity(target.getSifra(), absenceItemDTO.getRedniBroj()));
+                    }
+                }
+                for (AbsenceItemDTO absenceItemDTO : worksheetDTO.getAbsenceItemList()) {
+                    if (absenceItemDTO.getStatus().equals("insert")) {
+                        absenceItemRepository.save(toAbsenceItem(absenceItemDTO, target));
+                    }
+                }
+                for (AbsenceItemDTO absenceItemDTO : worksheetDTO.getAbsenceItemList()) {
+                    if (absenceItemDTO.getStatus().equals("update")) {
+                        AbsenceItem absenceItemSource = toAbsenceItem(absenceItemDTO, target);
+                        AbsenceItem absenceItemTarget = absenceItemRepository.getById(new AbsenceItemIdentity(target.getSifra(), absenceItemDTO.getRedniBroj()));
+                        BeanUtils.copyProperties(absenceItemSource, absenceItemTarget, "worksheet", "redniBro");
+                        absenceItemRepository.save(absenceItemTarget);
+                    }
+                }
+            }
+
+            return true;
+        }
+        return false;
     }
 
     private WorksheetDTO fromEntity(Worksheet worksheet) {

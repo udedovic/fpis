@@ -15,4 +15,5 @@ public class AbsenceItemDTO {
     private Integer vrstaOdsustva;
     private Date datumOd;
     private Date datumDo;
+    private String status;
 }

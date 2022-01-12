@@ -36,6 +36,7 @@ public class WorksheetController {
         try {
             return worksheetService.updateWorksheet(worksheetDTO);
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }

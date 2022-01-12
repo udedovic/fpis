@@ -22,12 +22,12 @@ public class Worksheet {
     @JoinColumn(name = "worker_sifra", referencedColumnName = "sifra")
     private Worker worker;
 
-    @OneToMany(mappedBy = "worksheet", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "worksheet", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Fetch(value = FetchMode.SUBSELECT)
     @JsonIgnore
     private List<PresenceItem> presenceItemList;
 
-    @OneToMany(mappedBy = "worksheet", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "worksheet", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Fetch(value = FetchMode.SUBSELECT)
     @JsonIgnore
     private List<AbsenceItem> absenceItemList;

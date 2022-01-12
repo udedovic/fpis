@@ -15,4 +15,5 @@ public class PresenceItemDTO {
     private Integer vrstaPrisustva;
     private String opis;
     private Date datum;
+    private String status;
 }
